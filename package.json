@@ -26,6 +26,6 @@
 		"typescript-eslint": "^7.10.0"
 	},
 	"scripts": {
-		"start": "yarn && ts-node-dev src/index.ts"
+		"start": "yarn && ts-node src/index.ts"
 	}
 }
