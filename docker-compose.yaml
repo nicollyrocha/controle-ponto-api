@@ -9,11 +9,17 @@ services:
   environment:
    POSTGRES_USER: postgres
    POSTGRES_PASSWORD: 050118
-   POSTGRES_DB: pontos_db
+   POSTGRES_DB: controle_ponto_db
   volumes:
    - ./data:/data/postgres
  app:
   container_name: controle_ponto_api
+  environment:
+   - POSTGRES_USERNAME=postgres
+   - POSTGRES_PORT=5432
+   - POSTGRES_DB=controle_ponto_db
+   - POSTGRES_HOST=controle_ponto_db
+   - POSTGRES_PASSWORD=050118
   build: .
   restart: always
   depends_on:
