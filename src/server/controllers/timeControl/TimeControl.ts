@@ -5,7 +5,7 @@ export const createTimeControlByUser = async (req: Request, res: Response) => {
 	const data = req.body;
 
 	const { rows } = await db.query(
-		`INSERT INTO user_pontos (userid, starttime) VALUES ('${data.userid}', '${data.starttime}') RETURNING *`
+		`INSERT INTO controle_ponto (userid, starttime) VALUES ('${data.userid}', '${data.starttime}') RETURNING *`
 	);
 
 	if (rows.length > 0) {
@@ -30,12 +30,12 @@ export const updateTimeControlByUser = async (req: Request, res: Response) => {
 	const data = req.body;
 
 	const query = await db.query(
-		`UPDATE user_pontos SET endtime = '${data.endtime}' WHERE userid = '${data.userid}'`
+		`UPDATE controle_ponto SET endtime = '${data.endtime}' WHERE userid = '${data.userid}'`
 	);
 
 	if (query) {
 		const { rows } = await db.query(
-			`SELECT * FROM user_pontos WHERE userid = '${data.userid}'`
+			`SELECT * FROM controle_ponto WHERE userid = '${data.userid}'`
 		);
 
 		if (rows.length > 0) {
@@ -61,7 +61,7 @@ export const getTimeControlByUser = async (req: Request, res: Response) => {
 	const id = req.params.id;
 
 	const { rows } = await db.query(
-		`SELECT * FROM user_pontos WHERE userid = '${id}'`
+		`SELECT * FROM controle_ponto WHERE userid = '${id}'`
 	);
 
 	if (rows.length > 0) {
