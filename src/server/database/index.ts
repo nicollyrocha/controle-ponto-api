@@ -14,6 +14,11 @@ const pool = new Pool({
 	ssl: true,
 });
 
+// Sem este handler, um erro em uma conexão ociosa derruba o processo
+pool.on('error', (err: Error) => {
+	console.error('Erro inesperado no pool do banco de dados', err);
+});
+
 pool.on('connect', () => {
 	console.log('Base de Dados conectado com sucesso!');
 });
