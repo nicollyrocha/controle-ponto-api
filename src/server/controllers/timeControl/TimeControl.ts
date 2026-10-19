@@ -43,36 +43,36 @@ export const createTimeControlByUser = async (req: Request, res: Response) => {
 
 export const updateTimeControlByUser = async (req: Request, res: Response) => {
 	const data = req.body;
+	const id = req.params.id;
 
 	try {
-		const query = await db.query(
-			'UPDATE controle_ponto SET endtime = $1 WHERE userid = $2',
-			[data.endtime, data.userid]
+		// Fecha apenas o registro do id da URL, não todos os registros do usuário
+		const { rowCount } = await db.query(
+			'UPDATE controle_ponto SET endtime = $1 WHERE id = $2 AND userid = $3',
+			[data.endtime, id, data.userid]
 		);
 
-		if (query) {
-			const { rows } = await db.query(
-				'SELECT * FROM controle_ponto WHERE userid = $1',
-				[data.userid]
-			);
-
-			if (rows.length > 0) {
-				res.status(200).send({
-					body: {
-						message: 'Horário editado com sucesso',
-						status: 200,
-						body: rows,
-					},
-				});
-			} else {
-				return res.status(404).send({
-					body: {
-						message: 'Ocorreu um erro ao editar um horário',
-						status: 404,
-					},
-				});
-			}
+		if (rowCount === 0) {
+			return res.status(404).send({
+				body: {
+					message: 'Horário não encontrado',
+					status: 404,
+				},
+			});
 		}
+
+		const { rows } = await db.query(
+			'SELECT * FROM controle_ponto WHERE userid = $1',
+			[data.userid]
+		);
+
+		res.status(200).send({
+			body: {
+				message: 'Horário editado com sucesso',
+				status: 200,
+				body: rows,
+			},
+		});
 	} catch (error) {
 		return sendServerError(res, error);
 	}
@@ -87,22 +87,14 @@ export const getTimeControlByUser = async (req: Request, res: Response) => {
 			[id]
 		);
 
-		if (rows.length > 0) {
-			res.status(200).send({
-				body: {
-					timeControl: rows,
-					message: 'User found!',
-					status: 200,
-				},
-			});
-		} else {
-			return res.status(404).send({
-				body: {
-					message: 'User not found.',
-					status: 404,
-				},
-			});
-		}
+		// Usuário sem registros não é erro: devolve a lista vazia
+		res.status(200).send({
+			body: {
+				timeControl: rows,
+				message: 'User found!',
+				status: 200,
+			},
+		});
 	} catch (error) {
 		return sendServerError(res, error);
 	}
